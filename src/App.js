@@ -191,12 +191,8 @@ function App() {
 
   async function fetchCsv(filePath) {
     const response = await fetch(filePath);
-    const reader = response.body.getReader();
-    const result = await reader.read();
-    const decoder = new TextDecoder("utf-8");
-    const csv = decoder.decode(result.value);
     console.log(`read csv ${filePath}`);
-    return csv;
+    return await response.text();
   }
 
   return (
