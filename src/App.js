@@ -173,6 +173,7 @@ function App() {
 
   async function GetData(filePath) {
     var data = await fetchCsv(filePath);
+    console.log(data);
     const csv = Papa.parse(data, {
       header: true,
     });
