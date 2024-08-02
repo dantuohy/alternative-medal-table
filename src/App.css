@@ -1,38 +1,90 @@
-.App {
+/* h1 {
   text-align: center;
+  margin-top: 20px;
+  font-size: 2em;
+  text-align: center;
+  font-size: calc(10px + 2vmin);
+} */
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+.App .App-header .description {
+  text-align: center;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  display: flex;
+  flex-direction: column;
+  font-size: calc(16px);
+  padding: 20px 20px;
 }
 
-.App-link {
-  color: #61dafb;
+.heading {
+  background-color: #f6b092;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+.App .table {
+  margin: auto;
+}
+
+@media (min-width: 769px) {
+  .App .table {
+    width: 75%;
   }
-  to {
-    transform: rotate(360deg);
+  .App .App-header .description {
+    margin-left: 150px;
+    margin-right: 150px;
   }
+}
+
+@media (max-width: 768px) {
+  .bullet-points {
+    padding: 0 10px;
+  }
+
+  .bullet-points li {
+    padding: 10px 10px 10px 20px;
+  }
+
+  .bullet-points li:before {
+    left: -15px;
+  }
+}
+
+.App .table .lbJhKe {
+  max-height: fit-content;
+}
+
+.bullet-points {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 0 20px;
+  list-style: none;
+}
+
+.bullet-points li {
+  background: #f0f0f0;
+  margin: 10px 0;
+  padding: 10px 15px;
+  border-left: 5px solid #007bff;
+  border-radius: 4px;
+  position: relative;
+}
+
+.bullet-points li:before {
+  content: "•";
+  color: #007bff;
+  font-size: 1.5em;
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.bg-cover {
+  background-size: cover !important;
 }

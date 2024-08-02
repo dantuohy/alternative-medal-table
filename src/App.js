@@ -20,26 +20,25 @@ function App() {
       sortable: true,
     },
     {
-      name: "Rank (Average)",
+      name: "Average",
       selector: (row) => row.average,
       sortable: true,
     },
     {
-      name: "Rank (Medal Count)",
+      name: "Total Score",
       selector: (row) => row.weightedRank,
       sortable: true,
     },
     {
-      name: "Rank (GDP Per Capita)",
-      selector: (row) => row.gdpRank,
-      sortable: true,
-    },
-    {
-      name: "Rank (Population)",
+      name: "Per Capita",
       selector: (row) => row.popRank,
       sortable: true,
     },
-
+    {
+      name: "GDP Per Capita",
+      selector: (row) => row.gdpRank,
+      sortable: true,
+    },
     {
       name: "Gold",
       selector: (row) => row.goldMedals,
@@ -198,9 +197,71 @@ function App() {
   return (
     tableData.length > 0 && (
       <div className="App">
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
+          crossorigin="anonymous"
+        ></link>
+        <div
+          //          style="background: url(https://bootstrapious.com/i/snippets/sn-static-header/background.jpg)"
+          className="jumbotron bg-cover text-white heading"
+        >
+          <div className="container py-5 text-center">
+            <h1 className="display-4 font-weight-bold">
+              Paris 2024 - Alternative Medal Table
+            </h1>
+            <p className="font-italic mb-0">
+              The alternative medal table for the 2024 Paris Olympic Games
+              presents a comprehensive evaluation of country performances,
+              incorporating traditional and novel metrics. It offers a
+              multi-dimensional perspective on Olympic achievements, recognizing
+              both absolute and relative performances.
+            </p>
+          </div>
+        </div>
+
         <header className="App-header">
-          <DataTable fixedHeader={true} columns={columns} data={tableData} />
+          <ul className="bullet-points">
+            <li>
+              <b>Average Ranking:</b> An overall ranking is calculated by
+              averaging a country's position across all four ranking methods,
+              offering a balanced view of Olympic success.
+            </li>
+            <li>
+              <b>Total Score System:</b> Medals are assigned point values—3
+              points for gold, 2 for silver, and 1 for bronze—creating a
+              cumulative score that ranks countries based on overall medal
+              achievements.
+            </li>
+            <li>
+              <b>Medals Per Capita:</b> This ranking adjusts the total score by
+              the population of each country, highlighting the relative
+              performance of smaller nations.
+            </li>
+            <li>
+              <b>Medals per GDP Per Capita:</b> This metric evaluates countries
+              by their total score in relation to their GDP per capita,
+              providing insight into the efficiency of their Olympic programs
+              relative to economic strength.
+            </li>
+            <li>
+              <b>Traditional Ranking System:</b> Countries are ranked primarily
+              by the number of gold medals won, with silver and bronze used as
+              tiebreakers.
+            </li>
+          </ul>
         </header>
+        <body>
+          <div className="table">
+            <DataTable
+              height={true}
+              fixedHeader={true}
+              columns={columns}
+              data={tableData}
+            />
+          </div>
+        </body>
       </div>
     )
   );
