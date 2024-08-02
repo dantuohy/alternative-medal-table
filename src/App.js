@@ -78,8 +78,10 @@ function App() {
   }, []);
 
   function process(medalData, popData, gdpData) {
-    console.log("for each");
-    console.log(medalData);
+    console.log(`medalData length: ${medalData.length}`);
+    console.log(`popData length: ${popData.length}`);
+    console.log(`gdpData length: ${gdpData.length}`);
+
     var results = [];
 
     medalData.forEach((medalWinner) => {
@@ -193,6 +195,7 @@ function App() {
     const result = await reader.read();
     const decoder = new TextDecoder("utf-8");
     const csv = await decoder.decode(result.value);
+    console.log(`read csv ${filePath}`);
     return csv;
   }
 
