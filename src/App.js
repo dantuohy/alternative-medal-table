@@ -1,24 +1,216 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import Papa from "papaparse";
+import "./App.css";
+import DataTable from "react-data-table-component";
 
 function App() {
+  //const [gdpData, setGdpData] = useState([]);
+  //const [popData, setPopData] = useState([]);
+  //const [medalData, setMedalData] = useState([]);
+  const [tableData, setTableData] = useState([]);
+
+  const columns = [
+    {
+      name: "",
+      //selector: (row) => row.flag,
+      grow: 0,
+      cell: (row) => (
+        <img height="84px" width="56px" alt={row.name} src={row.flag} />
+      ),
+    },
+    {
+      name: "Name",
+      selector: (row) => row.name,
+      sortable: true,
+    },
+    {
+      name: "Rank (Average)",
+      selector: (row) => row.average,
+      sortable: true,
+    },
+    {
+      name: "Rank (Medal Count)",
+      selector: (row) => row.weightedRank,
+      sortable: true,
+    },
+    {
+      name: "Rank (GDP Per Capita)",
+      selector: (row) => row.gdpRank,
+      sortable: true,
+    },
+    {
+      name: "Rank (Population)",
+      selector: (row) => row.popRank,
+      sortable: true,
+    },
+
+    {
+      name: "Gold",
+      selector: (row) => row.goldMedals,
+      sortable: true,
+    },
+    {
+      name: "Silver",
+      selector: (row) => row.silverMedals,
+      sortable: true,
+    },
+    {
+      name: "Bronze",
+      selector: (row) => row.bronzeMedals,
+      sortable: true,
+    },
+    {
+      name: "Medal Count",
+      selector: (row) => row.totalMedals,
+      sortable: true,
+    },
+  ];
+
+  const GOLD_VAL = 3;
+  const SILVER_VAL = 2;
+  const BRONZE_VAL = 1;
+
+  useEffect(() => {
+    const fetch = async () => {
+      var gdp = await GetData("data/gdp_per_capita.csv");
+      //setGdpData(gdp);
+      var pop = await GetData("data/pop.csv");
+      //setPopData(pop);
+      var med = await fetchMedalTable();
+      //setMedalData((pre) => ({ ...pre, data: med }));
+      process(med, pop, gdp);
+    };
+
+    fetch();
+  }, []);
+
+  function process(medalData, popData, gdpData) {
+    console.log("for each");
+    console.log(medalData);
+    var results = [];
+
+    medalData.forEach((medalWinner) => {
+      var result = {
+        flag: `//images.sports.gracenote.com/images/lib/basic/geo/country/flag/SVG/${medalWinner.n_NOCGeoID}.svg`,
+        name: medalWinner.c_NOC,
+        rank: medalWinner.rank,
+        gdpRank: 0,
+        goldMedals: medalWinner.n_Gold,
+        silverMedals: medalWinner.n_Silver,
+        bronzeMedals: medalWinner.n_Bronze,
+        totalMedals: medalWinner.n_Total,
+        totalScore:
+          medalWinner.n_Gold * GOLD_VAL +
+          medalWinner.n_Silver * SILVER_VAL +
+          medalWinner.n_Bronze * BRONZE_VAL,
+      };
+
+      var pop = popData.find(
+        (x) => x["Country Code"] == medalWinner.c_NOCShort
+      );
+      if (!pop) {
+        pop = popData.find((x) => x["Country Name"] == medalWinner.c_NOC);
+      }
+      if (pop && Object.hasOwn(pop, "2023")) {
+        var population = pop["2023"];
+
+        result.popScore = result.totalScore / population;
+      } else {
+        console.log(medalWinner.c_NOCShort);
+        console.log(pop);
+      }
+
+      var gdp = gdpData.find(
+        (x) => x["Country Code"] == medalWinner.c_NOCShort
+      );
+      if (!gdp) {
+        gdp = gdpData.find((x) => x["Country Name"] == medalWinner.c_NOC);
+      }
+      if (gdp && Object.hasOwn(gdp, "2023")) {
+        var gpdPer = gdp["2023"];
+
+        result.gdpScore = result.totalScore / gpdPer;
+      } else {
+        console.log(medalWinner.c_NOCShort);
+        console.log(gdp);
+      }
+
+      results.push(result);
+    });
+
+    // Step 1: Sort the array in descending order based on the score
+    results.sort((a, b) => b.popScore - a.popScore);
+
+    // Step 2: Assign ranks based on the sorted order
+    for (let i = 0; i < results.length; i++) {
+      results[i].popRank = i + 1; // Rank starts from 1
+    }
+
+    // Step 1: Sort the array in descending order based on the score
+    results.sort((a, b) => b.gdpScore - a.gdpScore);
+
+    // Step 2: Assign ranks based on the sorted order
+    for (let i = 0; i < results.length; i++) {
+      results[i].gdpRank = i + 1; // Rank starts from 1
+    }
+
+    // Step 1: Sort the array in descending order based on the score
+    results.sort((a, b) => b.totalScore - a.totalScore);
+
+    // Step 2: Assign ranks based on the sorted order
+    for (let i = 0; i < results.length; i++) {
+      results[i].weightedRank = i + 1; // Rank starts from 1
+    }
+
+    // Step 1: Sort the array in descending order based on the score
+    results.sort(
+      (a, b) =>
+        (a.popRank + a.gdpRank + a.weightedRank) / 3 -
+        (b.popRank + b.gdpRank + b.weightedRank) / 3
+    );
+
+    // Step 2: Assign ranks based on the sorted order
+    for (let i = 0; i < results.length; i++) {
+      results[i].average = i + 1; // Rank starts from 1
+    }
+
+    setTableData(results);
+    return true;
+  }
+
+  async function GetData(filePath) {
+    const csv = Papa.parse(await fetchCsv(filePath), {
+      header: true,
+    });
+
+    return csv.data;
+  }
+
+  async function fetchMedalTable() {
+    const response = await fetch(
+      "https://api-gracenote.nbcolympics.com/svc/games_v2.svc/json/GetMedalTable_Season?competitionSetId=1&season=2024&languageCode=2"
+    );
+    var json = await response.json();
+    return json.MedalTableNOC;
+  }
+
+  async function fetchCsv(filePath) {
+    const response = await fetch(filePath);
+    const reader = response.body.getReader();
+    const result = await reader.read();
+    const decoder = new TextDecoder("utf-8");
+    const csv = await decoder.decode(result.value);
+    return csv;
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    tableData.length > 0 && (
+      <div className="App">
+        <header className="App-header">
+          <DataTable fixedHeader={true} columns={columns} data={tableData} />
+        </header>
+      </div>
+    )
   );
 }
 
