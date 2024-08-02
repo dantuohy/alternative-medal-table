@@ -4,15 +4,11 @@ import "./App.css";
 import DataTable from "react-data-table-component";
 
 function App() {
-  //const [gdpData, setGdpData] = useState([]);
-  //const [popData, setPopData] = useState([]);
-  //const [medalData, setMedalData] = useState([]);
   const [tableData, setTableData] = useState([]);
 
   const columns = [
     {
       name: "",
-      //selector: (row) => row.flag,
       grow: 0,
       cell: (row) => (
         <img height="84px" width="56px" alt={row.name} src={row.flag} />
@@ -73,11 +69,8 @@ function App() {
   useEffect(() => {
     const fetch = async () => {
       var gdp = await GetData("data/gdp_per_capita.csv");
-      //setGdpData(gdp);
       var pop = await GetData("data/pop.csv");
-      //setPopData(pop);
       var med = await fetchMedalTable();
-      //setMedalData((pre) => ({ ...pre, data: med }));
       process(med, pop, gdp);
     };
 
@@ -106,10 +99,10 @@ function App() {
       };
 
       var pop = popData.find(
-        (x) => x["Country Code"] == medalWinner.c_NOCShort
+        (x) => x["Country Code"] === medalWinner.c_NOCShort
       );
       if (!pop) {
-        pop = popData.find((x) => x["Country Name"] == medalWinner.c_NOC);
+        pop = popData.find((x) => x["Country Name"] === medalWinner.c_NOC);
       }
       if (pop && Object.hasOwn(pop, "2023")) {
         var population = pop["2023"];
@@ -121,10 +114,10 @@ function App() {
       }
 
       var gdp = gdpData.find(
-        (x) => x["Country Code"] == medalWinner.c_NOCShort
+        (x) => x["Country Code"] === medalWinner.c_NOCShort
       );
       if (!gdp) {
-        gdp = gdpData.find((x) => x["Country Name"] == medalWinner.c_NOC);
+        gdp = gdpData.find((x) => x["Country Name"] === medalWinner.c_NOC);
       }
       if (gdp && Object.hasOwn(gdp, "2023")) {
         var gpdPer = gdp["2023"];
