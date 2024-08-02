@@ -101,11 +101,10 @@ function App() {
       };
 
       var pop = popData.find(
-        (x) => x["Country Code"] == medalWinner.c_NOCShort
+        (x) =>
+          x["Country Code"] == medalWinner.c_NOCShort ||
+          x["Country Name"] == medalWinner.c_NOC
       );
-      if (!pop) {
-        pop = popData.find((x) => x["Country Name"] == medalWinner.c_NOC);
-      }
       if (pop && Object.hasOwn(pop, "2023")) {
         var population = pop["2023"];
 
@@ -116,11 +115,10 @@ function App() {
       }
 
       var gdp = gdpData.find(
-        (x) => x["Country Code"] === medalWinner.c_NOCShort
+        (x) =>
+          x["Country Code"] == medalWinner.c_NOCShort ||
+          x["Country Name"] == medalWinner.c_NOC
       );
-      if (!gdp) {
-        gdp = gdpData.find((x) => x["Country Name"] == medalWinner.c_NOC);
-      }
       if (gdp && Object.hasOwn(gdp, "2023")) {
         var gpdPer = gdp["2023"];
 
@@ -174,7 +172,8 @@ function App() {
   }
 
   async function GetData(filePath) {
-    const csv = Papa.parse(await fetchCsv(filePath), {
+    var data = await fetchCsv(filePath);
+    const csv = Papa.parse(data, {
       header: true,
     });
 
@@ -194,7 +193,7 @@ function App() {
     const reader = response.body.getReader();
     const result = await reader.read();
     const decoder = new TextDecoder("utf-8");
-    const csv = await decoder.decode(result.value);
+    const csv = decoder.decode(result.value);
     console.log(`read csv ${filePath}`);
     return csv;
   }
