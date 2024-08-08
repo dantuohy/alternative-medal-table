@@ -99,11 +99,10 @@ function App() {
           medalWinner.n_Bronze * BRONZE_VAL,
       };
 
-      var pop = popData.find(
-        (x) =>
-          x["Country Name"] == medalWinner.c_NOC ||
-          x["Country Code"] == medalWinner.c_NOCShort
-      );
+      var pop = popData.find((x) => x["Country Name"] == medalWinner.c_NOC);
+      if (!pop) {
+        pop = popData.find((x) => x["Country Code"] == medalWinner.c_NOCShort);
+      }
       if (pop && Object.hasOwn(pop, "2023")) {
         var population = pop["2023"];
 
@@ -113,11 +112,10 @@ function App() {
         console.log(pop);
       }
 
-      var gdp = gdpData.find(
-        (x) =>
-          x["Country Name"] == medalWinner.c_NOC ||
-          x["Country Code"] == medalWinner.c_NOCShort
-      );
+      var gdp = gdpData.find((x) => x["Country Name"] == medalWinner.c_NOC);
+      if (!gdp) {
+        gdp = gdpData.find((x) => x["Country Code"] == medalWinner.c_NOCShort);
+      }
       if (gdp && Object.hasOwn(gdp, "2023")) {
         var gpdPer = gdp["2023"];
 
